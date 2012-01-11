@@ -10,11 +10,19 @@ class Users extends Backbone.Collection
   model: User
 
 class UserList extends Backbone.View
-  tagName: 'ul'
+  tagName: 'table'
   className: 'user-list'
   events: {}
 
-  template: _.template("Users:")
+  template: _.template("""
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Hits</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    """)
 
   initialize: () ->
     _.bindAll(this, 'addOne', 'addAll', 'render')
@@ -24,12 +32,14 @@ class UserList extends Backbone.View
     @users.bind('change', @addAll)
 
     @users.bind('save', -> p('save'))
+    @users.bind('destroy', @addAll)
     @users.bind('add', -> p('add'))
     @users.bind('create', -> p('create'))
 
     @users.fetch()
 
   addAll: ->
+    p 'addAll'
     $(@el).html('')
     @users.each(@addOne)
 
@@ -42,13 +52,18 @@ class UserList extends Backbone.View
     this
 
 class UserRow extends Backbone.View
-  tagName: "li"
+  tagName: "tr"
   className: "user-row"
   events: {
-    'click': 'hit'
+    'click .name': 'hit'
+    'click .delete': 'delete'
   }
 
-  template: _.template('name: <%- name %>, hits: <%- hits %>')
+  template: _.template("""
+    <td class="name"><%- name %></td>
+    <td class="hits"><%- hits %></td>
+    <td class="delete">Delete</td>
+    """)
 
   initialize: () ->
     _.bindAll(this, 'render')
@@ -61,6 +76,9 @@ class UserRow extends Backbone.View
 
   hit: ->
     @user.save(hits: @user.get('hits') + 1)
+
+  delete: ->
+    @user.destroy()
 
 class Socket extends Rubyists.Socket
   onopen: ->

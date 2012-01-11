@@ -36,6 +36,9 @@ class User < Sequel::Model
     end
 
     def ws_delete(id)
+      return unless instance = self[id: id]
+      instance.delete
+      return {id: instance.id}
     end
   end
 

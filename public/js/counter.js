@@ -35,10 +35,10 @@
     function UserList() {
       UserList.__super__.constructor.apply(this, arguments);
     }
-    UserList.prototype.tagName = 'ul';
+    UserList.prototype.tagName = 'table';
     UserList.prototype.className = 'user-list';
     UserList.prototype.events = {};
-    UserList.prototype.template = _.template("Users:");
+    UserList.prototype.template = _.template("<thead>\n  <tr>\n    <th>Name</th>\n    <th>Hits</th>\n    <th>Delete</th>\n  </tr>\n</thead>");
     UserList.prototype.initialize = function() {
       _.bindAll(this, 'addOne', 'addAll', 'render');
       this.users = this.options.users;
@@ -47,6 +47,7 @@
       this.users.bind('save', function() {
         return p('save');
       });
+      this.users.bind('destroy', this.addAll);
       this.users.bind('add', function() {
         return p('add');
       });
@@ -56,6 +57,7 @@
       return this.users.fetch();
     };
     UserList.prototype.addAll = function() {
+      p('addAll');
       $(this.el).html('');
       return this.users.each(this.addOne);
     };
@@ -79,12 +81,13 @@
     function UserRow() {
       UserRow.__super__.constructor.apply(this, arguments);
     }
-    UserRow.prototype.tagName = "li";
+    UserRow.prototype.tagName = "tr";
     UserRow.prototype.className = "user-row";
     UserRow.prototype.events = {
-      'click': 'hit'
+      'click .name': 'hit',
+      'click .delete': 'delete'
     };
-    UserRow.prototype.template = _.template('name: <%- name %>, hits: <%- hits %>');
+    UserRow.prototype.template = _.template("<td class=\"name\"><%- name %></td>\n<td class=\"hits\"><%- hits %></td>\n<td class=\"delete\">Delete</td>");
     UserRow.prototype.initialize = function() {
       _.bindAll(this, 'render');
       this.user = this.options.user;
@@ -101,6 +104,9 @@
       return this.user.save({
         hits: this.user.get('hits') + 1
       });
+    };
+    UserRow.prototype["delete"] = function() {
+      return this.user.destroy();
     };
     return UserRow;
   })();
