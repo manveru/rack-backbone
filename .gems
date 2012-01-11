@@ -1,0 +1,8 @@
+# .gems generated gem export file. Note that any env variable settings will be missing. Append these after using a ';' field separator
+addressable -v2.2.6
+em-websocket -v0.3.6
+eventmachine -v0.12.10
+faker -v1.0.1
+i18n -v0.6.0
+sequel -v3.31.0
+sqlite3 -v1.3.5
